@@ -7,10 +7,10 @@ import java.awt.event.ActionListener;
 
 enum TYPE{NORMAL, PASSWORD, BODY}
 public class EmailFrame {
-    private JFrame frame = new JFrame("Server Email");
-    private InputPanel senderId = new InputPanel("Server Id", "OK", TYPE.NORMAL);
-    private InputPanel senderPw = new InputPanel("Server Password", "OK", TYPE.NORMAL);
-    private InputPanel senderServer = new InputPanel("Server Server", "OK", TYPE.NORMAL);
+    private JFrame frame = new JFrame("Sender Email");
+    private InputPanel senderId = new InputPanel("Sender Id", "OK", TYPE.NORMAL);
+    private InputPanel senderPw = new InputPanel("Sender Password", "OK", TYPE.NORMAL);
+    private InputPanel senderServer = new InputPanel("Sender Server", "OK", TYPE.NORMAL);
     private InputPanel receiverID = new InputPanel("Receiver Id", "OK", TYPE.NORMAL);
     private InputPanel subject = new InputPanel("Subject", "OK", TYPE.NORMAL);
     private InputPanel body = new InputPanel("Body", "OK", TYPE.BODY);
