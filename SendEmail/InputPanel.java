@@ -16,12 +16,13 @@ public class InputPanel {
 
         field = new JTextField(12);
         area = new JTextArea(5, 20);
-
+        JScrollPane scrollPane = new JScrollPane(area);
+        area.setLineWrap(true);
         if (type == TYPE.NORMAL){
             panel.add(this.field);
         }
         if (type == TYPE.BODY){
-            panel.add(this.area);
+            panel.add(scrollPane);
         }
     }
 
