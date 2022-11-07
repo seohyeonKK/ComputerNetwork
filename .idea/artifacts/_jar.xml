@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="팀프로젝트:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/_jar</output-path>
-    <root id="archive" name="팀프로젝트.jar">
-      <element id="module-output" name="팀프로젝트" />
-    </root>
-  </artifact>
-</component>

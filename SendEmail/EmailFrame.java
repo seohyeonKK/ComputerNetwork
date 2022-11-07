@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-enum TYPE{NORMAL, PASSWORD, BODY}
+enum TYPE{NORMAL, BODY}
 public class EmailFrame {
     private JFrame frame = new JFrame("Sender Email");
     private InputPanel senderId = new InputPanel("Sender Id", "OK", TYPE.NORMAL);
