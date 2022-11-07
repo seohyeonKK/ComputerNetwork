@@ -3,14 +3,13 @@ package SendEmail;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 import java.net.Socket;
-import java.util.Base64;
-import java.util.Scanner;
+import java.util.*;
 
 public class SMTP {
 
 
     Sender sender;
-    Receiver receiver;
+    List<Receiver> receivers;
     Email email;
 
     Socket socket;
@@ -19,9 +18,9 @@ public class SMTP {
     PrintWriter pw;
     String line;
 
-    SMTP(Email email, Sender sender, Receiver receiver) throws IOException {
+    SMTP(Email email, Sender sender, List<Receiver> receivers) throws IOException {
         this.sender = sender;
-        this.receiver = receiver;
+        this.receivers = receivers;
         this.email = email;
 
         sf = (SSLSocketFactory) SSLSocketFactory.getDefault();
@@ -42,16 +41,17 @@ public class SMTP {
                 sender.setPassword(frame.getSenderPw());
                 sender.setServer(frame.getSenderServer());
                 sender.setPort(465);
+
                 // set SendEmail.Receiver
-                Receiver receiver = new Receiver();
-                receiver.setId(frame.getReceiverId());
+                List<Receiver> receivers = Receiver.parse(frame.getReceiverId());
+
                 // set email
                 Email email = new Email();
                 email.setSubject(frame.getSubject());
                 email.setBody(frame.getBody());
 
                 // set smtpSender
-                SMTP smtpSender = new SMTP(email, sender, receiver);
+                SMTP smtpSender = new SMTP(email, sender, receivers);
 
                 // smtp server connect
                 smtpSender.CONNECT();
@@ -132,8 +132,10 @@ public class SMTP {
 
     public void TO() throws IOException {
         System.out.println("### RCPT 명령을 전송합니다.");
-        pw.println("RCPT TO:<"+receiver.getId()+">");
-        line=br.readLine();
+        for(Receiver r : receivers) {
+            pw.println("RCPT TO:<" + r.getId() + ">");
+        }
+        line = br.readLine();
         System.out.println("응답:"+line);
         System.out.println();
     }
@@ -158,8 +160,10 @@ public class SMTP {
         System.out.println("FROM 설정.");
         pw.println("FROM: " + sender.getId());
 
-        System.out.println("TO 설정.");
-        pw.println("TO: " + receiver.getId());
+//        System.out.println("TO 설정.");
+//        for(Receiver r : receivers) {
+//            pw.println("TO: " + r.getId());
+//        }
 
         System.out.println("SUBJECT 설정.");
         pw.println("SUBJECT:" + email.getSubject());
