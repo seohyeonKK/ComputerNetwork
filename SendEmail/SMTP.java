@@ -140,6 +140,17 @@ public class SMTP {
         System.out.println();
     }
 
+    private static byte[] getFileBinary(String filepath) {
+        File file = new File(filepath);
+        byte[] data = new byte[(int) file.length()];
+        try (FileInputStream stream = new FileInputStream(file)) {
+            stream.read(data, 0, data.length);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
     public void DATA() throws IOException {
         Scanner sc = new Scanner(System.in);
 
@@ -160,16 +171,33 @@ public class SMTP {
         System.out.println("FROM 설정.");
         pw.println("FROM: " + sender.getId());
 
-//        System.out.println("TO 설정.");
-//        for(Receiver r : receivers) {
-//            pw.println("TO: " + r.getId());
-//        }
+
+        String filePath = "../../en.subject.pdf";
+        String filename = filePath.substring(filePath.lastIndexOf('/') + 1);
+        byte[] binary = getFileBinary(filePath);
+        String base64data = Base64.getEncoder().encodeToString(binary);
 
         System.out.println("SUBJECT 설정.");
         pw.println("SUBJECT:" + email.getSubject());
+        pw.println("MIME-Version: 1.0");
 
         System.out.println("본문을 전송합니다.");
-        pw.print("\r\n" + email.getBody());
+        pw.println("Content-Type: multipart/mixed; boundary=\"computernetwork_sh_jy_hd_ds_dasfansfjnkl_3421412\"");
+        pw.print("\r\n");
+
+        pw.println("--computernetwork_sh_jy_hd_ds_dasfansfjnkl_3421412");
+        pw.println("Content-Type: text/plain; charset=UTF-8");
+        pw.println(email.getBody());
+
+        pw.println("--computernetwork_sh_jy_hd_ds_dasfansfjnkl_3421412");
+        pw.println("Content-Type: application/octet-stream; name=" + filename);
+        pw.println("Content-Transfer-Encoding: base64");
+        pw.println("Content-Disposition: attachment; filename=" + filename);
+        pw.println("Content-Description:" + filename);
+        pw.println(base64data);
+        pw.println("--computernetwork_sh_jy_hd_ds_dasfansfjnkl_3421412--");
+        pw.print("\r\n");
+
         pw.print("\r\n.\r\n");
 
         System.out.println("QUIT 명령을 전송합니다");
