@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 enum TYPE{NORMAL, BODY}
 public class EmailFrame {
     private JFrame frame = new JFrame("Sender Email");
+
     private InputPanel senderId = new InputPanel("Sender Id", "OK", TYPE.NORMAL);
     private InputPanel senderPw = new InputPanel("Sender Password", "OK", TYPE.NORMAL);
     private InputPanel senderServer = new InputPanel("Sender Server", "OK", TYPE.NORMAL);
@@ -18,16 +19,22 @@ public class EmailFrame {
     private JButton sendBtn = new JButton("Send");
     private JButton  resetBtn = new JButton("Reset");
     private JButton getFile = new JButton("Open file");
+
+    private InputPanel attachment = new InputPanel("attachment", "OK", TYPE.NORMAL);
+
+
+
     private boolean send = false;
     private String filePath = "";
 
 
     public void createFrame() {
-        frame.setSize(350, 400);
+        frame.setSize(350, 450);
         Dimension frameSize = frame.getSize();
         Dimension windowSize = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation((windowSize.width - frameSize.width) / 2,
                 (windowSize.height - frameSize.height) / 2);
+
         frame.setLayout(new FlowLayout());
         frame.add(senderId.getPanel());
         frame.add(senderPw.getPanel());
@@ -38,6 +45,9 @@ public class EmailFrame {
         frame.add(getFile);
         frame.add(sendBtn);
         frame.add(resetBtn);
+
+        attachment.getTextArea().setColumns(20);
+        frame.add(attachment.getPanel());
 
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -95,6 +105,7 @@ public class EmailFrame {
                 return;
             }
             filePath = chooser.getSelectedFile().getPath();
+            attachment.getTextArea().setText(filePath);
             System.out.println("Selected File : " + filePath);
         }
 
@@ -110,6 +121,7 @@ public class EmailFrame {
             receiverID.resetInput();
             subject.resetInput();
             body.resetInput();
+            attachment.getTextArea().setText("");
             filePath = "";
         }
     }
