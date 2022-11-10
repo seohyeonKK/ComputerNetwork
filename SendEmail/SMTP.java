@@ -172,9 +172,10 @@ public class SMTP {
         System.out.println("FROM 설정.");
         pw.println("FROM: " + sender.getId());
 
-        for(int i=0; i<receivers.size(); i++)
-            pw.println("TO: " + receivers.get(i).getId());
-
+        System.out.println("TO 설정.");
+        for(Receiver r : receivers) {
+            pw.println("TO: " + r.getId());
+        }
 
 
         System.out.println("SUBJECT 설정.");
