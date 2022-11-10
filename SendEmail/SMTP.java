@@ -75,7 +75,7 @@ public class SMTP {
                 // close
                 smtpSender.close();
             }
-            Thread.sleep(500);
+            Thread.sleep(1000);
 
         }
     }
@@ -176,29 +176,29 @@ public class SMTP {
 
         System.out.println("SUBJECT 설정.");
         pw.println("SUBJECT:" + email.getSubject());
-        pw.println("MIME-Version: 1.0");
 
         System.out.println("본문을 전송합니다.");
-        pw.println("Content-Type: multipart/mixed; boundary=\"computernetwork_sh_jy_hd_ds_dasfansfjnkl_3421412\"");
-        pw.print("\r\n");
-
-        pw.println("--computernetwork_sh_jy_hd_ds_dasfansfjnkl_3421412");
-        pw.println("Content-Type: text/plain; charset=UTF-8");
-        pw.println(email.getBody());
-
         String filePath = email.getFilePath();
+
+        pw.println("Content-Type:multipart/mixed;boundary=\"wpqkfdydh1234214\"");
+        pw.print("\r\n");
+        pw.println("--wpqkfdydh1234214");
+        pw.println("Content-Type:text/plain;charset=UTF-8");
+        pw.println("Content-Disposition:inline");
+        pw.print("\r\n");
+        pw.println(email.getBody());
         if (!filePath.isBlank()) {
             String filename = filePath.substring(filePath.lastIndexOf('/' ) + 1);
             byte[] binary = getFileBinary(filePath);
             String base64data = Base64.getEncoder().encodeToString(binary);
-            pw.println("--computernetwork_sh_jy_hd_ds_dasfansfjnkl_3421412");
-            pw.println("Content-Type: application/octet-stream; name=" + filename);
-            pw.println("Content-Transfer-Encoding: base64");
-            pw.println("Content-Disposition: attachment; filename=" + filename);
-            pw.println("Content-Description:" + filename);
+            pw.println("--wpqkfdydh1234214");
+            pw.println("Content-Type:application/octet-stream; name=" + filename);
+            pw.println("Content-Transfer-Encoding:base64");
+            pw.println("Content-Disposition:attachment;filename=" + filename+";");
+            pw.print("\r\n");
             pw.println(base64data);
-            pw.println("--computernetwork_sh_jy_hd_ds_dasfansfjnkl_3421412--");
         }
+        pw.println("--wpqkfdydh1234214--");
         pw.print("\r\n.\r\n");
 
         System.out.println("QUIT 명령을 전송합니다");
