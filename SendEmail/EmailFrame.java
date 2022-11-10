@@ -5,6 +5,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 enum TYPE{NORMAL, BODY}
 public class EmailFrame {
@@ -21,9 +22,6 @@ public class EmailFrame {
     private JButton getFile = new JButton("Open file");
 
     private InputPanel attachment = new InputPanel("attachment", "OK", TYPE.NORMAL);
-
-
-
     private boolean send = false;
     private String filePath = "";
 
@@ -100,12 +98,15 @@ public class EmailFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             int ret = chooser.showOpenDialog(null);
-            if (ret != JFileChooser.APPROVE_OPTION) {
+            if (ret != JFileChooser.APPROVE_OPTION && filePath.isBlank()) {
                 JOptionPane.showMessageDialog(null, "No file selected", "warning", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            filePath = chooser.getSelectedFile().getPath();
-            attachment.getTextArea().setText(filePath);
+            File file = chooser.getSelectedFile();
+            if (file != null && file.exists())
+                filePath = file.getPath();
+            if (!filePath.isBlank())
+                attachment.getTextArea().setText(filePath);
             System.out.println("Selected File : " + filePath);
         }
 
