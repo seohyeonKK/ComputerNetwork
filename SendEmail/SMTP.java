@@ -173,10 +173,14 @@ public class SMTP {
         pw.println("FROM: " + sender.getId());
 
         System.out.println("TO 설정.");
-        for(Receiver r : receivers) {
-            pw.println("TO: " + r.getId());
+        String toHeader = "";
+        int size = receivers.size();
+        for(int i = 0; i < size - 1; i++){
+            toHeader += receivers.get(i).getId() + ", ";
         }
-
+        if (size > 0)
+            toHeader += receivers.get(size - 1).getId();
+        pw.println("TO: " + toHeader);
 
         System.out.println("SUBJECT 설정.");
         pw.println("SUBJECT:" + email.getSubject());
