@@ -1,6 +1,7 @@
 package SendEmail;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,30 +15,12 @@ public class EmailFrame {
     private InputPanel receiverID = new InputPanel("Receiver Id", "OK", TYPE.NORMAL);
     private InputPanel subject = new InputPanel("Subject", "OK", TYPE.NORMAL);
     private InputPanel body = new InputPanel("Body", "OK", TYPE.BODY);
-
     private JButton sendBtn = new JButton("Send");
     private JButton  resetBtn = new JButton("Reset");
-
-
+    private JButton getFile = new JButton("Open file");
     private boolean send = false;
-    private ActionListener sendEmail = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (isFilled())
-                setSend(true);
-        }
-    };
-    private ActionListener reset = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            senderId.resetInput();
-            senderPw.resetInput();
-            senderServer.resetInput();
-            receiverID.resetInput();
-            subject.resetInput();
-            body.resetInput();
-        }
-    };
+    private String filePath = "";
+
 
     public void createFrame() {
         frame.setSize(350, 400);
@@ -52,13 +35,15 @@ public class EmailFrame {
         frame.add(receiverID.getPanel());
         frame.add(subject.getPanel());
         frame.add(body.getPanel());
+        frame.add(getFile);
         frame.add(sendBtn);
         frame.add(resetBtn);
 
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        sendBtn.addActionListener(sendEmail);
-        resetBtn.addActionListener(reset);
+        sendBtn.addActionListener(new SendActionListener());
+        resetBtn.addActionListener(new ResetActionListener());
+        getFile.addActionListener(new OpenActionListener());
     }
 
     public String getSenderId() {
@@ -87,10 +72,54 @@ public class EmailFrame {
     private boolean isFilled(){
         if (getSenderId().isEmpty() || getSenderPw().isEmpty() || getSenderServer().isEmpty()||
             getReceiverId().isEmpty() || getSubject().isEmpty() || getBody().isEmpty()){
-            System.out.println("Please fill in all values");
+            JOptionPane.showMessageDialog(null, "Please fill in all values", "warning", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;
+    }
+    public String getFilePath() {
+        return filePath;
+    }
+
+    class OpenActionListener implements ActionListener{
+
+        private JFileChooser chooser;
+        OpenActionListener() {
+            chooser = new JFileChooser();
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int ret = chooser.showOpenDialog(null);
+            if (ret != JFileChooser.APPROVE_OPTION) {
+                JOptionPane.showMessageDialog(null, "No file selected", "warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            filePath = chooser.getSelectedFile().getPath();
+            System.out.println("Selected File : " + filePath);
+        }
+
+
+    }
+
+    class ResetActionListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            senderId.resetInput();
+            senderPw.resetInput();
+            senderServer.resetInput();
+            receiverID.resetInput();
+            subject.resetInput();
+            body.resetInput();
+            filePath = "";
+        }
+    }
+
+    class SendActionListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (isFilled())
+                setSend(true);
+        }
     }
 }
 

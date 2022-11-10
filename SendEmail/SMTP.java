@@ -49,6 +49,7 @@ public class SMTP {
                 Email email = new Email();
                 email.setSubject(frame.getSubject());
                 email.setBody(frame.getBody());
+                email.setFilePath(frame.getFilePath());
 
                 // set smtpSender
                 SMTP smtpSender = new SMTP(email, sender, receivers);
@@ -172,10 +173,6 @@ public class SMTP {
         pw.println("FROM: " + sender.getId());
 
 
-        String filePath = "../../en.subject.pdf";
-        String filename = filePath.substring(filePath.lastIndexOf('/') + 1);
-        byte[] binary = getFileBinary(filePath);
-        String base64data = Base64.getEncoder().encodeToString(binary);
 
         System.out.println("SUBJECT 설정.");
         pw.println("SUBJECT:" + email.getSubject());
@@ -189,15 +186,19 @@ public class SMTP {
         pw.println("Content-Type: text/plain; charset=UTF-8");
         pw.println(email.getBody());
 
-        pw.println("--computernetwork_sh_jy_hd_ds_dasfansfjnkl_3421412");
-        pw.println("Content-Type: application/octet-stream; name=" + filename);
-        pw.println("Content-Transfer-Encoding: base64");
-        pw.println("Content-Disposition: attachment; filename=" + filename);
-        pw.println("Content-Description:" + filename);
-        pw.println(base64data);
-        pw.println("--computernetwork_sh_jy_hd_ds_dasfansfjnkl_3421412--");
-        pw.print("\r\n");
-
+        String filePath = email.getFilePath();
+        if (!filePath.isBlank()) {
+            String filename = filePath.substring(filePath.lastIndexOf('/' ) + 1);
+            byte[] binary = getFileBinary(filePath);
+            String base64data = Base64.getEncoder().encodeToString(binary);
+            pw.println("--computernetwork_sh_jy_hd_ds_dasfansfjnkl_3421412");
+            pw.println("Content-Type: application/octet-stream; name=" + filename);
+            pw.println("Content-Transfer-Encoding: base64");
+            pw.println("Content-Disposition: attachment; filename=" + filename);
+            pw.println("Content-Description:" + filename);
+            pw.println(base64data);
+            pw.println("--computernetwork_sh_jy_hd_ds_dasfansfjnkl_3421412--");
+        }
         pw.print("\r\n.\r\n");
 
         System.out.println("QUIT 명령을 전송합니다");
