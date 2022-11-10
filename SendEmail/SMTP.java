@@ -49,6 +49,7 @@ public class SMTP {
                 Email email = new Email();
                 email.setSubject(frame.getSubject());
                 email.setBody(frame.getBody());
+                email.setFilePath(frame.getFilePath());
 
                 // set smtpSender
                 SMTP smtpSender = new SMTP(email, sender, receivers);
@@ -74,7 +75,7 @@ public class SMTP {
                 // close
                 smtpSender.close();
             }
-            Thread.sleep(500);
+            Thread.sleep(1000);
 
         }
     }
@@ -140,6 +141,17 @@ public class SMTP {
         System.out.println();
     }
 
+    private static byte[] getFileBinary(String filepath) {
+        File file = new File(filepath);
+        byte[] data = new byte[(int) file.length()];
+        try (FileInputStream stream = new FileInputStream(file)) {
+            stream.read(data, 0, data.length);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
     public void DATA() throws IOException {
         Scanner sc = new Scanner(System.in);
 
@@ -160,16 +172,41 @@ public class SMTP {
         System.out.println("FROM 설정.");
         pw.println("FROM: " + sender.getId());
 
-//        System.out.println("TO 설정.");
-//        for(Receiver r : receivers) {
-//            pw.println("TO: " + r.getId());
-//        }
+        System.out.println("TO 설정.");
+        String toHeader = "";
+        int size = receivers.size();
+        for(int i = 0; i < size - 1; i++){
+            toHeader += receivers.get(i).getId() + ", ";
+        }
+        if (size > 0)
+            toHeader += receivers.get(size - 1).getId();
+        pw.println("TO: " + toHeader);
 
         System.out.println("SUBJECT 설정.");
         pw.println("SUBJECT:" + email.getSubject());
 
         System.out.println("본문을 전송합니다.");
-        pw.print("\r\n" + email.getBody());
+        String filePath = email.getFilePath();
+
+        pw.println("Content-Type:multipart/mixed;boundary=\"wpqkfdydh1234214\"");
+        pw.print("\r\n");
+        pw.println("--wpqkfdydh1234214");
+        pw.println("Content-Type:text/plain;charset=UTF-8");
+        pw.println("Content-Disposition:inline");
+        pw.print("\r\n");
+        pw.println(email.getBody());
+        if (!filePath.isBlank()) {
+            String filename = filePath.substring(filePath.lastIndexOf('/' ) + 1);
+            byte[] binary = getFileBinary(filePath);
+            String base64data = Base64.getEncoder().encodeToString(binary);
+            pw.println("--wpqkfdydh1234214");
+            pw.println("Content-Type:application/octet-stream; name=" + filename);
+            pw.println("Content-Transfer-Encoding:base64");
+            pw.println("Content-Disposition:attachment;filename=" + filename+";");
+            pw.print("\r\n");
+            pw.println(base64data);
+        }
+        pw.println("--wpqkfdydh1234214--");
         pw.print("\r\n.\r\n");
 
         System.out.println("QUIT 명령을 전송합니다");
