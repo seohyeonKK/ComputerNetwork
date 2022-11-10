@@ -38,8 +38,13 @@ public class InputPanel {
         return null;
     }
 
+    public JTextField getTextArea(){
+        return field;
+    }
+
     public void resetInput() {
         field.setText("");
         area.setText("");
+
     }
 }
